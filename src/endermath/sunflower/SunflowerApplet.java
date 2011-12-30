@@ -29,7 +29,8 @@ public class SunflowerApplet extends Applet implements Runnable, KeyListener {
 		g2d = backbuffer.createGraphics();
 		
 		Image iconSheet = getImage(this.getClass().getResource("icons2.png")); 
-		player.image = iconSheet; //iconSheet.getSubimage(32, 32, 32, 32);
+		player.image = createImage(new FilteredImageSource(iconSheet.getSource(), new CropImageFilter(0,16,16,16)));
+		
 		//pickupAudio = getAudioClip(this.getClass().getResource("../../../data/Pickup.wav"));
 		
 		for(int i=0; i<14; i++) {
