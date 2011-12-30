@@ -1,11 +1,11 @@
 package endermath.sunflower;
 
 public class Player extends BasicSprite {
-	private double waterLeftInWaterCan;
-	private int seedsCarrying;
+	double waterLeftInWaterCan;
+	int seedsCarrying;
 	
-	private int score;
-	private byte scoreMultiplier;
+	int score;
+	byte scoreMultiplier;
 	
 	private boolean isFacingRight;
 	private boolean isMovingLeft;
@@ -14,6 +14,8 @@ public class Player extends BasicSprite {
 	public boolean isOutside;
 	public boolean isWatering;
 	public boolean isRefilling;
+
+	public int timeLeft;
 	
 	public Player() {
 		isOutside = false;

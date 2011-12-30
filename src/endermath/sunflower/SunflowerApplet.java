@@ -1,5 +1,6 @@
 package endermath.sunflower;
 
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -13,28 +14,63 @@ public class SunflowerApplet extends Applet implements Runnable, KeyListener {
 	Thread gameLoop;
 	BufferedImage backbuffer;
 	Graphics2D g2d;
-	AffineTransform identity = new AffineTransform();
+	AffineTransform scale2X = AffineTransform.getScaleInstance(2,2);
 	Random rand = new Random();
 
 	Player player = new Player();
 	
+	Image iconSheet;
+	
+	Image playerImage;
+	Image wateringCanImage;
+	Image wateringSplashImage;
+	Image flowerStalkImage;
+	Image flowerImage;
+	Image seedImage;
+	Image skullImage;
+	Image clockImage;
+	Image tapImage;
+	Image tapSplashImage;
+	Image brickImage;
+	Image dirtImage;
+	
 	AudioClip pickupAudio;
 	
-	Flower[] flowerList = new Flower[14];
-	Vector<FallingItem> fallingItems = new Vector<FallingItem>();
 	
+	Flower[] flowerList = new Flower[14];
+	Vector<FallingSprite> fallingItems = new Vector<FallingSprite>();
+	
+	public Image getImageFromIconSheet(int x, int y) {
+		return createImage(new FilteredImageSource(iconSheet.getSource(), new CropImageFilter(x*16,y*16,16,16)));
+	}
 	/* applet init event. Should initialize the applet. */
-	public void init() {
-		backbuffer = new BufferedImage(512,512, BufferedImage.TYPE_INT_ARGB);
+	public void init() {		 
+		backbuffer = new BufferedImage(512, 512, BufferedImage.TYPE_INT_ARGB);
 		g2d = backbuffer.createGraphics();
 		
-		Image iconSheet = getImage(this.getClass().getResource("icons2.png")); 
-		player.image = createImage(new FilteredImageSource(iconSheet.getSource(), new CropImageFilter(0,16,16,16)));
+		iconSheet = getImage(this.getClass().getResource("data/icons2.png")); 
 		
-		//pickupAudio = getAudioClip(this.getClass().getResource("../../../data/Pickup.wav"));
+		wateringCanImage = getImageFromIconSheet(0,0);
+		wateringSplashImage = getImageFromIconSheet(1,0);
+		flowerImage = getImageFromIconSheet(2,0);
+		seedImage = getImageFromIconSheet(3,0);
+		skullImage = getImageFromIconSheet(4,0);
+		tapImage = getImageFromIconSheet(5,0);
+		playerImage = getImageFromIconSheet(0,1);
+		flowerStalkImage = getImageFromIconSheet(2,1);
+		clockImage = getImageFromIconSheet(4,1);
+		tapSplashImage = getImageFromIconSheet(5,1);
+		dirtImage = getImageFromIconSheet(0,2);
+		brickImage = getImageFromIconSheet(0,3);
+		
+		player.image = playerImage;
+		
+				
+		pickupAudio = getAudioClip(this.getClass().getResource("data/Pickup.wav"));
 		
 		for(int i=0; i<14; i++) {
 			flowerList[i] = new Flower();
+			flowerList[i].height = rand.nextInt(14);
 		}
 		
 		addKeyListener(this);
@@ -42,9 +78,9 @@ public class SunflowerApplet extends Applet implements Runnable, KeyListener {
 
 	/* applet update event to redraw the screen */
 	public void update(Graphics g) {
-		g2d.setTransform(identity);
+		g2d.setTransform(scale2X);
 		
-		g2d.setPaint(Color.BLACK);
+		g2d.setPaint(new Color(68,124,209));
 		g2d.fillRect(0,0,getSize().width,getSize().height);
 				
 		drawScene();
@@ -57,13 +93,30 @@ public class SunflowerApplet extends Applet implements Runnable, KeyListener {
 	}
 	
 	public void drawScene() {
-		g2d.setPaint(Color.BLUE);
-		g2d.fillRect(50, 50, 100, 100);
-
+		for(int y=0; y<16; y++) {
+			if (y<=12 || y==15 || !player.isOutside) {
+				g2d.drawImage(brickImage, 0, 16*y, this);	
+			}
+			if (y<=12 || y==15 || player.isOutside) {
+				g2d.drawImage(brickImage, 240, 16*y, this);
+			}
+			if (player.isOutside) {
+				g2d.drawImage(brickImage, 16*y, 240, this);
+			} else {
+				g2d.drawImage(dirtImage, 16*y, 240, this);
+			}
+		}
 	}
 	public void drawObjects() {
 		for(int i=0; i<14; i++) {
-			//g2d.drawImage(flowerList[i].getImage());
+			int h=flowerList[i].height;
+			if (h==0) {
+				continue;
+			}
+			g2d.drawImage(flowerImage, 16+i*16, (14-h)*16, this);
+			for(int y=14; y>14-h; y--) {
+				g2d.drawImage(flowerStalkImage, 16+i*16, y*16, this);
+			}
 		}
 	}
 	public void drawPlayer() {
@@ -72,6 +125,7 @@ public class SunflowerApplet extends Applet implements Runnable, KeyListener {
 		//g2d.setTransform(myTransform);
 		//g2d.translate(player.xPos, player.yPos);
 		//g2d.drawImage(player.image, identity, this);
+		g2d.drawImage(player.image, (int)player.xPos, (int)player.yPos, this);
 	}
 	
 	/* applet paint event. Called by update and whenever applet needs to e be updated. */
@@ -82,7 +136,7 @@ public class SunflowerApplet extends Applet implements Runnable, KeyListener {
 		g.drawString("Return to plant", 220, 90);
 */
 		g.drawImage(backbuffer, 0, 0, this);
-		g.drawImage(player.image, (int)player.xPos, (int)player.yPos, this);
+
 	}
 
 	

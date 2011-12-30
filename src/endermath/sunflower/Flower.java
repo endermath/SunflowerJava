@@ -1,13 +1,9 @@
 package endermath.sunflower;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 
-public class Flower extends Image {
-	private int height;
-	private static double maxWater = 3000;
-	private double water;
+public class Flower {
+	int height;
+	static double maxWater = 3000;
+	double water;
 	
 	public int xPosition;
 	public boolean isFinished;
@@ -31,40 +27,7 @@ public class Flower extends Image {
 						this.didGrowToMaximumHeight = true;
 					}
 				}
-			}
-			
+			}		
 		}
 	}
-
-	@Override
-	public Graphics getGraphics() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getHeight(ImageObserver observer) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public Object getProperty(String name, ImageObserver observer) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ImageProducer getSource() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getWidth(ImageObserver observer) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-			
 }
